@@ -9,28 +9,27 @@ kubectl: Correctly Configured: pointing to minikube-vm at 192.168.99.100
 ```
 
 
-Create namespace:
-```
-$ kubectl create -f minikube/jenkins-namespace.yaml
-```
+Jenkins URL : `jenkins.etc.com`
 
-
-
-Execute helm:
+Get the minikibe VM ip from below command and add it to `/etc/hosts` file against the above URL
 ```
-$ helm install --name jenkins -f helm/jenkins-values.yaml stable/jenkins --namespace jenkins-project
+$ minikube ip
 ```
 
 
-Check admin password for jenkins:
+Install tiller:
 ```
-$ printf $(kubectl get secret --namespace jenkins-project jenkins -o jsonpath="{.data.jenkins-admin-password}" | base64 --decode);echo
+$ helm init
 ```
 
 
-Get Jenkins URL:
+Deploy Jenkins. The deployment starts with 2 master nodes. Slaves are dynamically created as required:
 ```
-export NODE_PORT=$(kubectl get --namespace jenkins-project -o jsonpath="{.spec.ports[0].nodePort}" services jenkins)
-export NODE_IP=$(kubectl get nodes --namespace jenkins-project -o jsonpath="{.items[0].status.addresses[0].address}")
-echo http://$NODE_IP:$NODE_PORT
+$ ./start.sh
+```
+
+
+Remove all the above deployments:
+```
+$ ./stop.sh
 ```

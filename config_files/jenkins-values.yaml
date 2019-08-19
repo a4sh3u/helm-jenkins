@@ -4,9 +4,7 @@ master:
   tag: "lts"
   useSecurity: true
   adminUser: admin
-  serviceType: NodePort
-  nodePort: 32000
-  slaveListenerPort: 50000
+  serviceType: ClusterIP
   installPlugins:
     - kubernetes:1.18.1
     - workflow-aggregator:2.6
@@ -30,3 +28,15 @@ agent:
       hostPath: /var/run/docker.sock
       mountPath: /var/run/docker.sock
   nodeSelector: {}
+
+ingres:
+  enabled: true
+  apiVersion: "extensions/v1beta1"
+  hostName: 'jenkins.etc.com'
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+    kubernetes.io/ingress.allow-http: "false"
+  tls:
+    - secretName: jenkins-ingress-ssl
+      hosts:
+        - jenkins.etc.com
