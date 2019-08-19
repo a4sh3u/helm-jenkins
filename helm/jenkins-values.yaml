@@ -1,0 +1,32 @@
+master:
+  componentName: jenkins-master
+  image: "jenkins/jenkins"
+  tag: "lts"
+  useSecurity: true
+  adminUser: admin
+  serviceType: NodePort
+  nodePort: 32000
+  slaveListenerPort: 50000
+  installPlugins:
+    - kubernetes:1.18.1
+    - workflow-aggregator:2.6
+    - workflow-job:2.33
+    - credentials-binding:1.19
+    - git:3.11.0
+    - blueocean:1.18.1
+  scriptApproval:
+    - "method groovy.json.JsonSlurperClassic parseText java.lang.String"
+    - "new groovy.json.JsonSlurperClassic"
+    - "staticMethod org.codehaus.groovy.runtime.DefaultGroovyMethods leftShift java.util.Map java.util.Map"
+    - "staticMethod org.codehaus.groovy.runtime.DefaultGroovyMethods split java.lang.String"
+
+agent:
+  enabled: true
+  image: jenkins/jnlp-slave
+  tag: "3.27-1"
+  componentName: "jenkins-slave"
+  volumes:
+    - type: HostPath
+      hostPath: /var/run/docker.sock
+      mountPath: /var/run/docker.sock
+  nodeSelector: {}
